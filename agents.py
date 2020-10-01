@@ -127,7 +127,7 @@ class PruneAgent(HeuristicAgent):
         algorithm should do less work.  You can check this by inspecting the class variables
         GameState.p1_state_count and GameState.p2_state_count, which keep track of how many
         GameState objects were created over time.
-        test
+
         N.B.: When exploring the game tree and expanding nodes, you must consider the child nodes
         in the order that they are returned by GameState.successors().  That is, you cannot prune
         the state reached by moving to column 4 before you've explored the state reached by a move
@@ -140,6 +140,6 @@ class PruneAgent(HeuristicAgent):
         #
         # Fill this in!
         #
-        return 13  # Change this line!
+        return 0  # Change this line!
 
 
