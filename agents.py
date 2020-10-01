@@ -93,10 +93,30 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: the minimax utility value of the state
         """
-        #
-        # Fill this in!
-        #
-        return 9  # Change this line!
+        succ = state.successors()
+        nextp = state.next_player()
+        best_util = -math.inf if nextp == 1 else math.inf
+
+        print(depth)
+
+        if depth is not None and depth[0] == 0:
+            print("depth is 0")
+            return self.evaluation(state)
+
+        if state.is_full():
+            best_util = state.score()
+            return best_util
+        if depth is not None:
+            depth[0] = depth[0] - 1
+
+        for move, board in succ:
+            util = self.minimax(board, depth)
+            if (nextp == 1) and (util > best_util):
+                best_util = max(best_util, util)
+            elif (nextp == -1) and (util < best_util):
+                best_util = min(best_util, util)
+        # print(best_util)
+        return best_util
 
     def evaluation(self, state):
         """Estimate the utility value of the game state based on features.
@@ -108,9 +128,23 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: a heusristic estimate of the utility value of the state
         """
-        #
-        # Fill this in!
-        #
+        rows = state.get_all_rows()
+        cols = state.get_all_cols()
+        diags = state.get_all_diags()
+        nextp = state.next_player
+
+        if nextp == 1:
+            for i in rows:
+                print("i: ", i)
+        else:
+            for row in rows:
+                for i in row:
+                    # look for open slots, and square how many open spaces there are to determine how good the state is
+                    # could also look at how many in a row we already have
+                    # need to determine how to evaluate a state
+                    if i == 0:
+                        return -1
+
         return 19  # Change this line!
 
 
