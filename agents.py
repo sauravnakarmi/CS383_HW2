@@ -140,6 +140,6 @@ class PruneAgent(HeuristicAgent):
         #
         # Fill this in!
         #
-        return 0  # Change this line!
+        return 1  # Change this line!
 
 
