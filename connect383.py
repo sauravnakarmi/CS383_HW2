@@ -6,7 +6,7 @@ import test_boards
 
 class GameState:
     """Class representing a single state of a Connect4-esque game.
-    test1
+
     For details on the game, see: https://en.wikipedia.org/wiki/Connect_Four
 
     Once created, a game state object should usually not be modified; instead, use the successors()
