@@ -173,9 +173,40 @@ class PruneAgent(HeuristicAgent):
 
         Returns: the minimax utility value of the state
         """
-        #
-        # Fill this in!
-        #
-        return 1  # Change this line!
+        alpha = -math.inf  # setting alpha to worst possible case for maximizer
+        beta = math.inf  # setting beta to worst possible case for minimizer
+
+        succ = state.successors()
+        nextp = state.next_player()
+        best_util = -math.inf if nextp == 1 else math.inf
+
+        if state.is_full():
+            best_util = state.score()
+            return best_util
+
+        for move, board in succ:
+            util = self.minimax(board, None)
+
+            # pruning
+            if nextp == -1 and util < alpha:
+                return util
+            if nextp == 1 and util > beta:
+                return util
+
+            # setting alpha and beta
+            if nextp == -1 and util > alpha:
+                alpha = util
+                print("alpha: ", alpha)
+            if nextp == 1 and util < beta:
+                beta = util
+                print("beta: ", beta)
+
+            # minimax
+            if (nextp == 1) and (util > best_util):
+                best_util = max(best_util, util)
+            elif (nextp == -1) and (util < best_util):
+                best_util = min(best_util, util)
+
+        return best_util
 
 
