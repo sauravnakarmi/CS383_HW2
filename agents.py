@@ -43,7 +43,7 @@ class MinimaxAgent:
 
     def minimax(self, state, depth):
         """Determine the minimax utility value of the given state.
-        sss
+
         Args:
             state: a connect383.GameState object representing the current board
             depth: for this agent, the depth argument should be ignored!
@@ -72,9 +72,8 @@ class MinimaxAgent:
                 best_util = max(best_util, util)
             elif (nextp == -1) and (util < best_util):
                 best_util = min(best_util, util)
+        # print(best_util)
         return best_util
-
-    # git testing testing testing
 
 
 class HeuristicAgent(MinimaxAgent):
@@ -95,30 +94,10 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: the minimax utility value of the state
         """
-        succ = state.successors()
-        nextp = state.next_player()
-        best_util = -math.inf if nextp == 1 else math.inf
-
-        print(depth)
-
-        if depth is not None and depth[0] == 0:
-            print("depth is 0")
-            return self.evaluation(state)
-
-        if state.is_full():
-            best_util = state.score()
-            return best_util
-        if depth is not None:
-            depth[0] = depth[0] - 1
-
-        for move, board in succ:
-            util = self.minimax(board, depth)
-            if (nextp == 1) and (util > best_util):
-                best_util = max(best_util, util)
-            elif (nextp == -1) and (util < best_util):
-                best_util = min(best_util, util)
-        # print(best_util)
-        return best_util
+        #
+        # Fill this in!
+        #
+        return 9  # Change this line!
 
     def evaluation(self, state):
         """Estimate the utility value of the game state based on features.
@@ -130,23 +109,9 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: a heusristic estimate of the utility value of the state
         """
-        rows = state.get_all_rows()
-        cols = state.get_all_cols()
-        diags = state.get_all_diags()
-        nextp = state.next_player
-
-        if nextp == 1:
-            for i in rows:
-                print("i: ", i)
-        else:
-            for row in rows:
-                for i in row:
-                    # look for open slots, and square how many open spaces there are to determine how good the state is
-                    # could also look at how many in a row we already have
-                    # need to determine how to evaluate a state
-                    if i == 0:
-                        return -1
-
+        #
+        # Fill this in!
+        #
         return 19  # Change this line!
 
 
@@ -159,7 +124,7 @@ class PruneAgent(HeuristicAgent):
     def minimax_prune(self, state, depth):
         """Determine the minimax utility value the given state using alpha-beta pruning.
 
-        The value should be equal to the one determined by ComputerAgent.minimax(), but the 
+        The value should be equal to the one determined by ComputerAgent.minimax(), but the
         algorithm should do less work.  You can check this by inspecting the class variables
         GameState.p1_state_count and GameState.p2_state_count, which keep track of how many
         GameState objects were created over time.
@@ -173,6 +138,7 @@ class PruneAgent(HeuristicAgent):
 
         Returns: the minimax utility value of the state
         """
+
         alpha = -math.inf  # setting alpha to worst possible case for maximizer
         beta = math.inf  # setting beta to worst possible case for minimizer
 
@@ -196,10 +162,8 @@ class PruneAgent(HeuristicAgent):
             # setting alpha and beta
             if nextp == -1 and util > alpha:
                 alpha = util
-                print("alpha: ", alpha)
             if nextp == 1 and util < beta:
                 beta = util
-                print("beta: ", beta)
 
             # minimax
             if (nextp == 1) and (util > best_util):
