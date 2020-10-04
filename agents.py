@@ -94,10 +94,49 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: the minimax utility value of the state
         """
-        #
-        # Fill this in!
-        #
-        return 9  # Change this line!
+        """Determine the minimax utility value of the given state.
+
+                Args:
+                    state: a connect383.GameState object representing the current board
+                    depth: for this agent, the depth argument should be ignored!
+
+                Returns: the exact minimax utility value of the state
+                """
+        """Determine the minimax utility value of the given state.
+
+                Args:
+                    state: a connect383.GameState object representing the current board
+                    depth: for this agent, the depth argument should be ignored!
+
+                Returns: the exact minimax utility value of the state
+                """
+        succ = state.successors()
+        nextp = state.next_player()
+        best_util = -math.inf if nextp == 1 else math.inf
+
+        print(depth)
+
+        if depth[0] == 0:
+            best_util = self.evaluation(state)
+
+        if state.is_full():
+            best_util = state.score()
+            print('here')
+            return best_util
+
+        if depth is not None:
+            depth[0] = depth[0] - 1
+
+        for move, board in succ:
+            print("hi")
+            util = self.minimax(board, depth)
+            if (nextp == 1) and (util > best_util):
+                best_util = max(best_util, util)
+            elif (nextp == -1) and (util < best_util):
+                best_util = min(best_util, util)
+        # print(best_util)
+        return best_util
+
 
     def evaluation(self, state):
         """Estimate the utility value of the game state based on features.
@@ -109,6 +148,7 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: a heusristic estimate of the utility value of the state
         """
+        print("depth is 0")
         #
         # Fill this in!
         #
