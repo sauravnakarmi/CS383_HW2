@@ -124,17 +124,17 @@ class HeuristicAgent(MinimaxAgent):
             print('here')
             return best_util
 
-        if depth is not None:
-            depth[0] = depth[0] - 1
-
         for move, board in succ:
             print("hi")
+            if depth[0] != 0:
+                depth[0] = depth[0] - 1
             util = self.minimax(board, depth)
             if (nextp == 1) and (util > best_util):
                 best_util = max(best_util, util)
             elif (nextp == -1) and (util < best_util):
                 best_util = min(best_util, util)
-        # print(best_util)
+
+
         return best_util
 
 
