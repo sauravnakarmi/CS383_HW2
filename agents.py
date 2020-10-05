@@ -114,18 +114,15 @@ class HeuristicAgent(MinimaxAgent):
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
-        print(depth)
-
         if depth[0] == 0:
             best_util = self.evaluation(state)
+            return best_util
 
         if state.is_full():
             best_util = state.score()
-            print('here')
             return best_util
 
         for move, board in succ:
-            print("hi")
             if depth[0] != 0:
                 depth[0] = depth[0] - 1
             util = self.minimax(board, depth)
@@ -134,9 +131,7 @@ class HeuristicAgent(MinimaxAgent):
             elif (nextp == -1) and (util < best_util):
                 best_util = min(best_util, util)
 
-
         return best_util
-
 
     def evaluation(self, state):
         """Estimate the utility value of the game state based on features.
