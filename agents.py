@@ -114,6 +114,7 @@ class HeuristicAgent(MinimaxAgent):
             elif nextp == -1:
                 best_util = min(best_util, util)
 
+        # depth should only be decremented after all children are explored for a given state
         print("depth: ", depth[0])
         if depth[0] != 0:
             depth[0] = depth[0] - 1
