@@ -58,7 +58,7 @@ class MinimaxAgent:
 
                 Returns: the exact minimax utility value of the state
                 """
-        succ = state.successors()
+        succs = state.successors
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
@@ -66,11 +66,11 @@ class MinimaxAgent:
             best_util = state.score()
             return best_util
 
-        for move, board in succ:
+        for move, board in succs():
             util = self.minimax(board, None)
-            if (nextp == 1) and (util > best_util):
+            if nextp == 1:
                 best_util = max(best_util, util)
-            elif (nextp == -1) and (util < best_util):
+            elif nextp == -1:
                 best_util = min(best_util, util)
         # print(best_util)
         return best_util
@@ -94,26 +94,11 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: the minimax utility value of the state
         """
-        """Determine the minimax utility value of the given state.
-
-                Args:
-                    state: a connect383.GameState object representing the current board
-                    depth: for this agent, the depth argument should be ignored!
-
-                Returns: the exact minimax utility value of the state
-                """
-        """Determine the minimax utility value of the given state.
-
-                Args:
-                    state: a connect383.GameState object representing the current board
-                    depth: for this agent, the depth argument should be ignored!
-
-                Returns: the exact minimax utility value of the state
-                """
-        succ = state.successors()
+        succs = state.successors
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
+        # if depth is 0 run the eval function
         if depth[0] == 0:
             best_util = self.evaluation(state)
             return best_util
@@ -122,14 +107,16 @@ class HeuristicAgent(MinimaxAgent):
             best_util = state.score()
             return best_util
 
-        for move, board in succ:
-            if depth[0] != 0:
-                depth[0] = depth[0] - 1
+        for move, board in succs():
             util = self.minimax(board, depth)
-            if (nextp == 1) and (util > best_util):
+            if nextp == 1:
                 best_util = max(best_util, util)
-            elif (nextp == -1) and (util < best_util):
+            elif nextp == -1:
                 best_util = min(best_util, util)
+
+        print("depth: ", depth[0])
+        if depth[0] != 0:
+            depth[0] = depth[0] - 1
 
         return best_util
 
@@ -143,10 +130,11 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: a heusristic estimate of the utility value of the state
         """
-        print("depth is 0")
-        #
-        # Fill this in!
-        #
+        # print("depth is 0")
+        # diags = state.get_diags(1, 1)
+        # print("diags: ", diags)
+        # all_diags = state.get_all_diags()
+        # print("all diags: ", all_diags)
         return 19  # Change this line!
 
 
