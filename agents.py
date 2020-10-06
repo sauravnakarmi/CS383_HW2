@@ -179,7 +179,7 @@ class HeuristicAgent(MinimaxAgent):
                     p2_score += 1
                 if "-1, -1" in str(run):
                     print("hello")
-                    p2_score += 1
+                    p2_score += 5
 
         return p1_score - p2_score
 
