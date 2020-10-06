@@ -161,30 +161,31 @@ class HeuristicAgent(MinimaxAgent):
         p1_score = 0
         p2_score = 0
         for run in state.get_all_rows() + state.get_all_cols() + state.get_all_diags():
-            for elt, length in streaks(run):
-                if (elt == 1) and (length >= 2):
+                print(run)
+                if "1, 1" in str(run):
+                    print("hello")
+                    p1_score += 5
+                if "0, 1" in str(run):
+                    print("hello")
                     p1_score += 1
-                elif (elt == -1) and (length >= 2):
+                if "1, 0" in str(run):
+                    print("hello")
+                    p1_score += 1
+                if "-1, 0" in str(run):
+                    print("hello")
                     p2_score += 1
+                if "0, -1" in str(run):
+                    print("hello")
+                    p2_score += 1
+                if "-1, -1" in str(run):
+                    print("hello")
+                    p2_score += 1
+
         return p1_score - p2_score
 
         # **** count the number of open spaces next to a x or an o
 
 # prints length of streaks
-def streaks(lst):
-    """Return the lengths of all the streaks of the same element in a sequence."""
-    rets = []  # list of (element, length) tuples
-    prev = lst[0]
-    curr_len = 1
-    for curr in lst[1:]:
-        if curr == prev:
-            curr_len += 1
-        else:
-            rets.append((prev, curr_len))
-            prev = curr
-            curr_len = 1
-    rets.append((prev, curr_len))
-    return rets
 
 class PruneAgent(HeuristicAgent):
     """Smarter computer agent that uses minimax with alpha-beta pruning to select the best move."""
