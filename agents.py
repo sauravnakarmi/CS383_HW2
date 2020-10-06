@@ -243,5 +243,3 @@ class PruneAgent(HeuristicAgent):
                 best_util = min(best_util, util)
 
         return best_util
-
-
