@@ -98,13 +98,13 @@ class HeuristicAgent(MinimaxAgent):
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
+        if state.is_full():
+            best_util = state.score()
+            return best_util
+
         # if depth is 0 run the eval function
         if depth[0] == 0:
             best_util = self.evaluation(state)
-            return best_util
-
-        if state.is_full():
-            best_util = state.score()
             return best_util
 
         for move, board in succs():
@@ -131,13 +131,42 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: a heusristic estimate of the utility value of the state
         """
-        # print("depth is 0")
-        # diags = state.get_diags(1, 1)
-        # print("diags: ", diags)
-        # all_diags = state.get_all_diags()
-        # print("all diags: ", all_diags)
-        return 19  # Change this line!
+        print("in eval function:")
+        print(state)
+        nextp = state.next_player()
+        # list of lists
+        all_diags = state.get_all_diags()
+        # generates a new state so wont work
+        new_diags = [[elem if elem != 0 else 1 for elem in row] for row in all_diags]
 
+        # counts the streak number not faster than score
+        p1_score = 0
+        p2_score = 0
+        for run in state.get_all_rows() + state.get_all_cols() + state.get_all_diags():
+            for elt, length in streaks(run):
+                if (elt == 1) and (length >= 2):
+                    p1_score += 1
+                elif (elt == -1) and (length >= 2):
+                    p2_score += 1
+        return p1_score - p2_score
+
+        # **** count the number of open spaces next to a x or an o
+
+# prints length of streaks
+def streaks(lst):
+    """Return the lengths of all the streaks of the same element in a sequence."""
+    rets = []  # list of (element, length) tuples
+    prev = lst[0]
+    curr_len = 1
+    for curr in lst[1:]:
+        if curr == prev:
+            curr_len += 1
+        else:
+            rets.append((prev, curr_len))
+            prev = curr
+            curr_len = 1
+    rets.append((prev, curr_len))
+    return rets
 
 class PruneAgent(HeuristicAgent):
     """Smarter computer agent that uses minimax with alpha-beta pruning to select the best move."""
