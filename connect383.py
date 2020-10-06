@@ -248,5 +248,6 @@ if __name__ == "__main__":
         start_state.board = board
     else:
         start_state = GameState(args.nrows, args.ncols)
-
+    if isinstance(args.depth, list):
+        args.depth = args.depth[0]
     play_game(play1, play2, start_state, args.depth)

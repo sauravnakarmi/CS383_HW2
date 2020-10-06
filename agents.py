@@ -4,6 +4,10 @@ import math
 
 BOT_NAME = "INSERT NAME FOR YOUR BOT HERE"
 
+class Node:
+    def __init__(self, depth):
+        self.depth = depth
+
 
 class RandomAgent:
     """Agent that picks a random available move.  You should be able to beat it."""
@@ -83,6 +87,10 @@ class HeuristicAgent(MinimaxAgent):
         return self.minimax_depth(state, depth)
 
     def minimax_depth(self, state, depth):
+
+        print("depth: ", depth)
+
+
         """Determine the heuristically estimated minimax utility value of the given state.
 
         Args:
@@ -94,30 +102,40 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: the minimax utility value of the state
         """
+        arr = []
         succs = state.successors
+        # print(type(succs()))
+        # arr.append(succs())
+        # print(arr)
+
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
-        if state.is_full():
-            best_util = state.score()
-            return best_util
-
-        # if depth is 0 run the eval function
-        if depth[0] == 0:
+        if depth == 0:
             best_util = self.evaluation(state)
             return best_util
 
+        if state.is_full():
+            best_util = state.score()
+            print("full")
+            return best_util
+
+        # print("successors: ")
+        # for i in succs():
+        #     print(i)
+        # print("Len: ", len(succs()))
+        # print("")
         for move, board in succs():
-            util = self.minimax(board, depth)
+            util = self.minimax(board, depth-1)
             if nextp == 1:
                 best_util = max(best_util, util)
             elif nextp == -1:
                 best_util = min(best_util, util)
 
         # depth should only be decremented after all children are explored for a given state
-        print("depth: ", depth[0])
-        if depth[0] != 0:
-            depth[0] = depth[0] - 1
+        # print("depth: ", depth)
+        # if depth != 0:
+        #     depth = depth - 1
 
         return best_util
 
@@ -132,7 +150,7 @@ class HeuristicAgent(MinimaxAgent):
         Returns: a heusristic estimate of the utility value of the state
         """
         print("in eval function:")
-        print(state)
+        # print(state)
         nextp = state.next_player()
         # list of lists
         all_diags = state.get_all_diags()
