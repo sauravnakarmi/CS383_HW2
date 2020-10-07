@@ -15,9 +15,9 @@ class GameState:
     The board is stored as a 2D list, containing 1's representing Player 1's pieces and -1's
     for Player 2 (unused spaces are 0).
     """
-
+    
     state_count = 0  # bookkeeping to help track how efficient agents' search methods are running
-
+    
     def __init__(self, nrows=6, ncols=7):
         """Constructor for Connect4 state.
 
@@ -28,7 +28,7 @@ class GameState:
         """
         self.num_rows = nrows
         self.num_cols = ncols
-        self.board = [[0 for x in range(ncols)] for y in range(nrows)]
+        self.board = [ [ 0 for x in range(ncols) ] for y in range(nrows) ]
 
     def copy(self):
         """Create a duplicate of this game state."""
@@ -50,10 +50,10 @@ class GameState:
         player = self.next_player()
         successor = self.copy()
         row = 0
-        while (successor.board[row][col] != 0) and (row < successor.num_rows - 1):
+        while (successor.board[row][col] != 0) and (row < successor.num_rows-1):
             row += 1
         successor.board[row][col] = player
-        GameState.state_count += 1  # bookkeeping,
+        GameState.state_count += 1  # bookkeeping, 
         return successor
 
     def successors(self):
@@ -63,8 +63,8 @@ class GameState:
         """
         move_states = []
         for col in range(self.num_cols):
-            if self.board[self.num_rows - 1][col] == 0:
-                move_states.append((col, self.create_successor(col)))
+            if self.board[self.num_rows-1][col] == 0:
+                move_states.append((col, self.create_successor(col)))        
         return move_states
 
     # These accessor methods might be useful for calculation an agent's evaluation method!
@@ -75,8 +75,8 @@ class GameState:
 
     def get_col(self, c):
         """Gets the current values for any column in the board as a list."""
-        return [self.board[r][c] for r in range(self.num_rows)]
-
+        return [ self.board[r][c] for r in range(self.num_rows) ]
+        
     def get_cell(self, r, c):
         """Gets the current value for any cell in the board as a list."""
         return self.board[r][c]
@@ -89,17 +89,17 @@ class GameState:
             # "up" diagonal
             r = cross_r - (cross_c - c)
             if (0 <= r) and (r < self.num_rows):
-                diag_up.append(self.board[r][c])
+                diag_up.append(self.board[r][c]) 
 
-                # "down" diagonal
+            # "down" diagonal
             r = cross_r + (cross_c - c)
             if (0 <= r) and (r < self.num_rows):
-                diag_down.append(self.board[r][c])
+                diag_down.append(self.board[r][c]) 
         return diag_up, diag_down
 
     # Below are based on:
     # https://stackoverflow.com/questions/6313308/get-all-the-diagonals-in-a-matrix-list-of-lists-in-python
-
+    
     def get_all_rows(self):
         """Return a list of rows for the board."""
         return [[c for c in r] for r in self.board]
@@ -119,18 +119,18 @@ class GameState:
 
     def score(self):
         """Calculate the score for each player.
-
+        
         Players are awarded points for each streak (horizontal, vertical, or diagonal) of length 3
-        or greater equal to the square of the length (e.g., 4-in-a-row scores 16 points).
+        or greater equal to the square of the length (e.g., 4-in-a-row scores 16 points).        
         """
         p1_score = 0
         p2_score = 0
         for run in self.get_all_rows() + self.get_all_cols() + self.get_all_diags():
             for elt, length in streaks(run):
                 if (elt == 1) and (length >= 3):
-                    p1_score += length ** 2
+                    p1_score += length**2
                 elif (elt == -1) and (length >= 3):
-                    p2_score += length ** 2
+                    p2_score += length**2
         return p1_score - p2_score
 
     def is_full(self):
@@ -143,12 +143,17 @@ class GameState:
 
     def winner(self):
         s = self.score()
-        return s / abs(s)
+
+        if s == 0:
+            return s
+        else:
+            return s/abs(s)
+   
 
     def __str__(self):
-        symbols = {-1: "O", 1: "X", 0: "-"}
+        symbols = { -1: "O", 1: "X", 0: "-" }
         s = ""
-        for r in range(self.num_rows - 1, -1, -1):
+        for r in range(self.num_rows-1, -1, -1):
             s += "\n"
             for c in range(self.num_cols):
                 s += "  " + symbols[self.board[r][c]]
@@ -197,10 +202,10 @@ def play_game(player1, player2, state, depth=None):
         print("Current score is:", score)
 
         new_states_created = GameState.state_count - state_count_prev
-        if state.next_player() == 1:
+        if state.next_player() == -1:  # "reversed" since the state has been overwritten above!
             p1_state_count += new_states_created
         else:
-            p2_state_count += new_states_created
+            p2_state_count += new_states_created        
         state_count_prev = GameState.state_count
 
         turn += 1
@@ -223,21 +228,22 @@ def play_game(player1, player2, state, depth=None):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('p1', choices=['r', 'h', 'c', 'p'])
-    parser.add_argument('p2', choices=['r', 'h', 'c', 'p'])
+    parser.add_argument('p1', choices=['r','h','c','p'])
+    parser.add_argument('p2', choices=['r','h','c','p'])
     parser.add_argument('nrows', type=int)
     parser.add_argument('ncols', type=int)
     parser.add_argument('--depth', type=int, nargs=1)
     parser.add_argument('--board', choices=test_boards.boards.keys(), nargs=1)
     args = parser.parse_args()
 
-    agent_codes = {'r': RandomAgent,
-                   'h': HumanAgent,
-                   'c': MinimaxAgent,
-                   'p': PruneAgent}
+    agent_codes = { 'r': RandomAgent,
+                    'h': HumanAgent,
+                    'c': MinimaxAgent,
+                    'p': PruneAgent }
 
     if args.depth:  # if we gave it a depth limit, switch the the heuristic agent
         agent_codes['c'] = HeuristicAgent
+        args.depth = args.depth[0]
 
     play1 = agent_codes[args.p1]()
     play2 = agent_codes[args.p2]()
@@ -248,6 +254,6 @@ if __name__ == "__main__":
         start_state.board = board
     else:
         start_state = GameState(args.nrows, args.ncols)
-    if isinstance(args.depth, list):
-        args.depth = args.depth[0]
+
     play_game(play1, play2, start_state, args.depth)
+
