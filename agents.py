@@ -62,7 +62,6 @@ class MinimaxAgent:
 
                 Returns: the exact minimax utility value of the state
                 """
-        succs = state.successors
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
@@ -70,8 +69,9 @@ class MinimaxAgent:
             best_util = state.score()
             return best_util
 
-        for move, board in succs():
-            util = self.minimax(board, None)
+        for move, state in state.successors():
+            print(move, state)
+            util = self.minimax(state, None)
             if nextp == 1:
                 best_util = max(best_util, util)
             elif nextp == -1:
@@ -89,6 +89,7 @@ class HeuristicAgent(MinimaxAgent):
     def minimax_depth(self, state, depth):
 
         print("depth: ", depth)
+        print(state)
 
 
         """Determine the heuristically estimated minimax utility value of the given state.
@@ -103,7 +104,6 @@ class HeuristicAgent(MinimaxAgent):
         Returns: the minimax utility value of the state
         """
         arr = []
-        succs = state.successors
         # print(type(succs()))
         # arr.append(succs())
         # print(arr)
@@ -111,13 +111,13 @@ class HeuristicAgent(MinimaxAgent):
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
-        if depth == 0:
-            best_util = self.evaluation(state)
-            return best_util
-
         if state.is_full():
             best_util = state.score()
             print("full")
+            return best_util
+
+        if depth == 0:
+            best_util = self.evaluation(state)
             return best_util
 
         # print("successors: ")
@@ -125,15 +125,14 @@ class HeuristicAgent(MinimaxAgent):
         #     print(i)
         # print("Len: ", len(succs()))
         # print("")
-        for move, board in succs():
-            util = self.minimax(board, depth-1)
+        for move, state in state.successors():
+            util = self.minimax(state, depth-1)
             if nextp == 1:
                 best_util = max(best_util, util)
             elif nextp == -1:
                 best_util = min(best_util, util)
 
         # depth should only be decremented after all children are explored for a given state
-        # print("depth: ", depth)
         # if depth != 0:
         #     depth = depth - 1
 
@@ -150,40 +149,33 @@ class HeuristicAgent(MinimaxAgent):
         Returns: a heusristic estimate of the utility value of the state
         """
         print("in eval function:")
-        # print(state)
-        nextp = state.next_player()
+        print(state)
         # list of lists
-        all_diags = state.get_all_diags()
+        # all_diags = state.get_all_diags()
         # generates a new state so wont work
-        new_diags = [[elem if elem != 0 else 1 for elem in row] for row in all_diags]
+        # new_diags = [[elem if elem != 0 else 1 for elem in row] for row in all_diags]
 
         # counts the streak number not faster than score
         p1_score = 0
         p2_score = 0
         for run in state.get_all_rows() + state.get_all_cols() + state.get_all_diags():
-                print(run)
+                # print(run)
                 if "1, 1" in str(run):
-                    print("hello")
                     p1_score += 5
                 if "0, 1" in str(run):
-                    print("hello")
                     p1_score += 1
                 if "1, 0" in str(run):
-                    print("hello")
                     p1_score += 1
                 if "-1, 0" in str(run):
-                    print("hello")
                     p2_score += 1
                 if "0, -1" in str(run):
-                    print("hello")
                     p2_score += 1
                 if "-1, -1" in str(run):
-                    print("hello")
                     p2_score += 5
 
         return p1_score - p2_score
 
-        # **** count the number of open spaces next to a x or an o
+        # **** count the number of open spaces next to an x or an o
 
 # prints length of streaks
 
@@ -194,6 +186,8 @@ class PruneAgent(HeuristicAgent):
         return self.minimax_prune(state, depth)
 
     def minimax_prune(self, state, depth):
+
+        print("depth: ", depth)
         """Determine the minimax utility value the given state using alpha-beta pruning.
 
         The value should be equal to the one determined by ComputerAgent.minimax(), but the
@@ -214,7 +208,6 @@ class PruneAgent(HeuristicAgent):
         alpha = -math.inf  # setting alpha to worst possible case for maximizer
         beta = math.inf  # setting beta to worst possible case for minimizer
 
-        succ = state.successors()
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
 
@@ -222,8 +215,14 @@ class PruneAgent(HeuristicAgent):
             best_util = state.score()
             return best_util
 
-        for move, board in succ:
-            util = self.minimax(board, None)
+        print("state :", state)
+        if depth == 0:
+            print("depth :", depth)
+            best_util = HeuristicAgent.evaluation(self, state)
+            return best_util
+
+        for move, state in state.successors():
+            util = self.minimax(state, depth-1)
 
             # pruning
             if nextp == -1 and util < alpha:
@@ -238,9 +237,9 @@ class PruneAgent(HeuristicAgent):
                 beta = util
 
             # minimax
-            if (nextp == 1) and (util > best_util):
+            if nextp == 1:
                 best_util = max(best_util, util)
-            elif (nextp == -1) and (util < best_util):
+            elif nextp == -1:
                 best_util = min(best_util, util)
 
         return best_util
