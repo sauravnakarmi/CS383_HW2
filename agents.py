@@ -91,7 +91,6 @@ class HeuristicAgent(MinimaxAgent):
         print("depth: ", depth)
         print(state)
 
-
         """Determine the heuristically estimated minimax utility value of the given state.
 
         Args:
@@ -103,10 +102,6 @@ class HeuristicAgent(MinimaxAgent):
 
         Returns: the minimax utility value of the state
         """
-        arr = []
-        # print(type(succs()))
-        # arr.append(succs())
-        # print(arr)
 
         nextp = state.next_player()
         best_util = -math.inf if nextp == 1 else math.inf
@@ -120,21 +115,19 @@ class HeuristicAgent(MinimaxAgent):
             best_util = self.evaluation(state)
             return best_util
 
-        # print("successors: ")
-        # for i in succs():
-        #     print(i)
-        # print("Len: ", len(succs()))
-        # print("")
         for move, state in state.successors():
-            util = self.minimax(state, depth-1)
+            if depth is None:
+                depth = None
+                util = self.minimax(state, depth)
+            else:
+                util = self.minimax(state, depth-1)
+
             if nextp == 1:
                 best_util = max(best_util, util)
             elif nextp == -1:
                 best_util = min(best_util, util)
 
         # depth should only be decremented after all children are explored for a given state
-        # if depth != 0:
-        #     depth = depth - 1
 
         return best_util
 
@@ -150,34 +143,26 @@ class HeuristicAgent(MinimaxAgent):
         """
         print("in eval function:")
         print(state)
-        # list of lists
-        # all_diags = state.get_all_diags()
-        # generates a new state so wont work
-        # new_diags = [[elem if elem != 0 else 1 for elem in row] for row in all_diags]
 
-        # counts the streak number not faster than score
         p1_score = 0
         p2_score = 0
+
         for run in state.get_all_rows() + state.get_all_cols() + state.get_all_diags():
-                # print(run)
-                if "1, 1" in str(run):
+                if "1, 1" in str(run):  # checks for 'x, x'
                     p1_score += 5
-                if "0, 1" in str(run):
+                if "0, 1" in str(run):  # checks for ' , x'
                     p1_score += 1
-                if "1, 0" in str(run):
+                if "1, 0" in str(run):  # checks for 'x,  '
                     p1_score += 1
-                if "-1, 0" in str(run):
-                    p2_score += 1
-                if "0, -1" in str(run):
-                    p2_score += 1
-                if "-1, -1" in str(run):
+                if "-1, -1" in str(run):  # checks for 'o, o'
                     p2_score += 5
+                if "0, -1" in str(run):  # checks for ' , o'
+                    p2_score += 1
+                if "-1, 0" in str(run):  # checks for 'o,  '
+                    p2_score += 1
 
-        return p1_score - p2_score
+        return p1_score - p2_score  # subtract util scores to determine util
 
-        # **** count the number of open spaces next to an x or an o
-
-# prints length of streaks
 
 class PruneAgent(HeuristicAgent):
     """Smarter computer agent that uses minimax with alpha-beta pruning to select the best move."""
@@ -216,13 +201,17 @@ class PruneAgent(HeuristicAgent):
             return best_util
 
         print("state :", state)
-        if depth == 0:
+        if depth == 0 and depth is not None:
             print("depth :", depth)
             best_util = HeuristicAgent.evaluation(self, state)
             return best_util
 
         for move, state in state.successors():
-            util = self.minimax(state, depth-1)
+            if depth is None:
+                depth = None
+                util = self.minimax(state, depth)
+            else:
+                util = self.minimax(state, depth - 1)
 
             # pruning
             if nextp == -1 and util < alpha:
