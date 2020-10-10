@@ -35,6 +35,18 @@ boards['test_4x4'] = reversed([
     [ 1,  1, -1,  1]      
 ])  # minimax value of -18 (see Lecture 10 discussion session)
 
+boards['test1'] = reversed([
+    [  0,  0, 0],
+    [ 0,  -1, 0],
+    [ 1,  1, 0]
+])
+
+boards['test2'] = reversed([
+    [  0,  0, 0],
+    [ 0,  -1, 0],
+    [ 0,  1, 1]
+])
+
 boards['your_test'] = reversed([])  # put something here!
 
 
