@@ -148,43 +148,58 @@ class HeuristicAgent(MinimaxAgent):
         p2_score = 0
 
         for run in state.get_all_rows() + state.get_all_cols() + state.get_all_diags():
-                if "0, 1" in str(run):  # checks for ' , x'
-                    p1_score += 1
-                if "1, 0" in str(run):  # checks for 'x,  '
-                    p1_score += 1
-                if "0, -1" in str(run):  # checks for ' , o'
-                    p2_score += 1
-                if "-1, 0" in str(run):  # checks for 'o,  '
-                    p2_score += 1
-                for elt, length in streaks_eval(run):
-                    if (elt == 1) and (length >= 3):
-                        p1_score += length ** 3
-                    if (elt == 1) and (length == 2):
-                        p1_score += 10
-                    if (elt == -1) and (length >= 3):
-                        p2_score += length ** 3
-                    if (elt == -1) and (length == 2):
-                        p2_score += 10
+            # print("run",run)
+            # if '0, 1' in str(run):  # checks for ' , x'
+            #     print('0, 1')
+            #     p1_score += 1
+            # if '1, 0' in str(run):  # checks for 'x,  '
+            #     print('1, 0')
+            #     p1_score += 1
+            # if '0, -1' in str(run):  # checks for ' , o'
+            #     print('0, -1')
+            #     p2_score += 1
+            # if '-1, 0' in str(run):  # checks for 'o,  '
+            #     print('-1, 0')
+            #     p2_score += 1
+            for elt, length, score in streaks_eval(run):
+                if elt == 1:
+                    p1_score += score
+                if elt == -1:
+                    p2_score += score
+                if (elt == 1) and (length >= 3):
+                    p1_score += length ** 2
+                elif (elt == 1) and (length == 2):
+                    p1_score += 5
+                elif (elt == -1) and (length >= 3):
+                    p2_score += length ** 2
+                elif (elt == -1) and (length == 2):
+                    p2_score += 5
 
         # print("p1_score :",p1_score)
         # print("p2_score :", p2_score)
 
         return p1_score - p2_score  # subtract util scores to determine util
 
+
 def streaks_eval(lst):
     """Return the lengths of all the streaks of the same element in a sequence."""
     rets = []  # list of (element, length) tuples
     prev = lst[0]
     curr_len = 1
+    score = 0
     for curr in lst[1:]:
         if curr == prev:
             curr_len += 1
         else:
-            rets.append((prev, curr_len))
+            if curr == 0:
+                score = curr_len * 5
+            rets.append((prev, curr_len, score))
             prev = curr
             curr_len = 1
-    rets.append((prev, curr_len))
+            score = 0
+    rets.append((prev, curr_len, score))
     return rets
+
 
 class PruneAgent(HeuristicAgent):
     """Smarter computer agent that uses minimax with alpha-beta pruning to select the best move."""
